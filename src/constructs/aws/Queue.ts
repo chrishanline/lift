@@ -207,11 +207,11 @@ export class Queue extends AwsConstruct {
         });
 
         if (configuration.alarm !== undefined) {
-            // let alarmTopic: Topic;
-            // let alarmEmail: string | undefined;
             let alarmArn: string;
-            if (configuration.alarm.startsWith("arn:")) {
+            let alarmExistingTopic = undefined;
+            if (configuration.alarm.startsWith("arn:aws:sns:")) {
                 alarmArn = configuration.alarm;
+                alarmExistingTopic = true;
             } else if (configuration.alarm.includes("@")) {
                 const alarmEmail = configuration.alarm;
                 const alarmTopic = new Topic(this, "AlarmTopic", {
@@ -224,9 +224,10 @@ export class Queue extends AwsConstruct {
                     endpoint: alarmEmail,
                 });
                 alarmArn = alarmTopic.topicArn;
+                alarmExistingTopic = false;
             } else {
                 throw new ServerlessError(
-                    `Invalid configuration in 'constructs.${this.id}': 'alarm' must either be SNS topic ARN that starts with 'arn:' or an email address with '@' present, '${configuration.alarm}' given.`,
+                    `Invalid configuration in 'constructs.${this.id}': 'alarm' must either be SNS topic ARN that starts with 'arn:aws:sns:' or an email address with '@' present, '${configuration.alarm}' given.`,
                     "LIFT_INVALID_CONSTRUCT_CONFIGURATION"
                 );
             }
@@ -253,6 +254,13 @@ export class Queue extends AwsConstruct {
                     return { alarmActionArn: alarmArn };
                 },
             });
+            if (alarmExistingTopic) {
+                alarm.addOkAction({
+                    bind(): AlarmActionConfig {
+                        return { alarmActionArn: alarmArn };
+                    },
+                });
+            }
         }
 
         // CloudFormation outputs
