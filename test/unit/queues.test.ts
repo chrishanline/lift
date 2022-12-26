@@ -427,8 +427,6 @@ describe("queues", () => {
             "emailsDlq47F8494C",
             "emailsQueueF057328A",
             // Alarm
-            // "emailsAlarmTopic594BAEC9",
-            // "emailsAlarmTopicSubscription688AECB6",
             "emailsAlarm1821C14F",
         ]);
         expect(cfTemplate.Resources[computeLogicalId("emails", "Alarm")]).toMatchObject({
