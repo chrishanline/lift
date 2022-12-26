@@ -227,7 +227,7 @@ export class Queue extends AwsConstruct {
                 alarmExistingTopic = false;
             } else {
                 throw new ServerlessError(
-                    `Invalid configuration in 'constructs.${this.id}': 'alarm' must either be SNS topic ARN that starts with 'arn:aws:sns:' or an email address with '@' present, '${configuration.alarm}' given.`,
+                    `Invalid configuration in 'constructs.${this.id}': 'alarm' must be an SNS topic ARN that starts with 'arn:aws:sns:' or an email address with '@' present, '${configuration.alarm}' given.`,
                     "LIFT_INVALID_CONSTRUCT_CONFIGURATION"
                 );
             }
