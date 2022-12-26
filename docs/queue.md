@@ -254,7 +254,7 @@ constructs:
         alarm: alerting@mycompany.com
 ```
 
-Or you can specify an existing SNS topic for alerts. The alarm will send to the existing topic for `Alarm` and `Ok` messages.
+Or you can specify an existing SNS topic for alerts. The alarm will send to the existing topic for `Alarm` and `OK` messages.
 
 ```yaml
 constructs:
