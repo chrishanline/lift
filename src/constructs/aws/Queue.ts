@@ -212,7 +212,7 @@ export class Queue extends AwsConstruct {
             let alarmArn: string;
             if (configuration.alarm.startsWith("arn:")) {
                 alarmArn = configuration.alarm;
-            } else {
+            } else if (configuration.alarm.includes("@")) {
                 const alarmEmail = configuration.alarm;
                 const alarmTopic = new Topic(this, "AlarmTopic", {
                     topicName: `${this.provider.stackName}-${id}-dlq-alarm-topic`,
@@ -224,6 +224,11 @@ export class Queue extends AwsConstruct {
                     endpoint: alarmEmail,
                 });
                 alarmArn = alarmTopic.topicArn;
+            } else {
+                throw new ServerlessError(
+                    `Invalid configuration in 'constructs.${this.id}': 'alarm' must either be SNS topic ARN that starts with 'arn:' or an email address with '@' present, '${configuration.alarm}' given.`,
+                    "LIFT_INVALID_CONSTRUCT_CONFIGURATION"
+                );
             }
 
             const alarm = new Alarm(this, "Alarm", {
